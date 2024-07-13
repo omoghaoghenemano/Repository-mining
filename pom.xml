@@ -177,11 +177,7 @@
     <build>
         <finalName>ggnn</finalName>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/test</testSourceDirectory><testResources>
-            <testResource>
-                <directory>${project.basedir}/resources</directory>
-            </testResource>
-        </testResources>
+        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
 
         <plugins>
             <plugin>
@@ -196,6 +192,20 @@
                             <mainClass>de.uni_passau.fim.se2.sa.ggnn.Main</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+
+                    <excludes>
+                        <exclude>${project.basedir}/resources</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
