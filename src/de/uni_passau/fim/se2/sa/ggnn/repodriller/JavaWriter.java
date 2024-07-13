@@ -7,6 +7,7 @@ import java.nio.file.Path;
 public class JavaWriter implements PersistenceMechanism {
 
     private final Path directory;
+    private String fileName;
 
     public JavaWriter(Path directory) {
         this.directory = directory;
@@ -24,4 +25,7 @@ public class JavaWriter implements PersistenceMechanism {
         throw new UnsupportedOperationException("Implement me");
     }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }
