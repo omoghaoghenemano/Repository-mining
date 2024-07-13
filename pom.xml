@@ -177,7 +177,11 @@
     <build>
         <finalName>ggnn</finalName>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/test</testSourceDirectory><testResources>
+            <testResource>
+                <directory>${project.basedir}/resources</directory>
+            </testResource>
+        </testResources>
 
         <plugins>
             <plugin>
