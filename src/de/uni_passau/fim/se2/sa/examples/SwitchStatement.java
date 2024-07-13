@@ -1,20 +1,22 @@
+package de.uni_passau.fim.se2.sa.examples;
+
 public class SwitchStatement {
 
     public void switchStatement() {
-        int x;
+        int x = 2;
         var y = 1;
         switch (x) {
             case 1:
-                a(x);
+                x = x + 1;
             case 2:
-                b(y);
+                x = x + 2;
                 break;
             case 3:
-                c(x);
+                x = x + 3;
             default:
-                d(y);
+                x = x + 4;
         }
-        e(x % y);
+        x = x % y;
     }
 
 }

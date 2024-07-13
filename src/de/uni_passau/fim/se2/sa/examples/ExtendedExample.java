@@ -1,4 +1,4 @@
-package fixtures;
+package de.uni_passau.fim.se2.sa.examples;
 
 public class ExtendedExample {
     public static void main(final String[] args) {
@@ -23,7 +23,7 @@ public class ExtendedExample {
                 System.out.println(one);
             }
             default:
-                return;
+                System.out.println("DEFAULT");
         }
 
         if (args.length == 0) {
