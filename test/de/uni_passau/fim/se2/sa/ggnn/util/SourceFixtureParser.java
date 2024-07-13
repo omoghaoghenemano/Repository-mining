@@ -56,4 +56,10 @@ public final class SourceFixtureParser {
         return Path.of(this.getClass().getClassLoader().getResource(pathParts).getPath());
     }
 
+
+    public IdentityHashMap<AstNode, IdentityWrapper<AstNode>> buildIdentityMap(AstNode node) {
+        astNodeMap.putIfAbsent(node, IdentityWrapper.of(node));
+        node.children().forEach(this::buildIdentityMap);
+        return astNodeMap;
+    }
 }
