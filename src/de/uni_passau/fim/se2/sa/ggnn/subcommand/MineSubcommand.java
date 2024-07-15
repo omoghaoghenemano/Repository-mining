@@ -46,7 +46,7 @@ public class MineSubcommand implements Runnable {
 
     @Option(
             names = {"-c", "--commits"},
-            description = {"A list of commits defining which commit of the repository at the respective list index should be mined."},
+            description = {"A list of SHA-1 commit ids defining which commits should be mined."},
             split = ",",
             required = true
     )
