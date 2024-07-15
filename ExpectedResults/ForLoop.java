@@ -1,5 +1,3 @@
-package de.uni_passau.fim.se2.sa.examples;
-
 public class ForLoop {
 
     public void forLoop() {

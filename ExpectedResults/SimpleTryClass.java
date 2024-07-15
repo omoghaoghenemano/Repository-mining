@@ -1,5 +1,3 @@
-package de.uni_passau.fim.se2.sa.examples;
-
 import com.google.common.io.Files;
 
 import java.io.BufferedReader;
