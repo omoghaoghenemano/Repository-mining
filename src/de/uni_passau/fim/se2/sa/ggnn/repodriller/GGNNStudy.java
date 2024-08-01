@@ -34,13 +34,26 @@ public class GGNNStudy implements Study {
                     SCMRepository repo = GitRepository.singleProject(localRepoPath.toString());
                     JavaWriter javaWriter = new JavaWriter(outputDirectory);
 
-                    if (commits != null && !commits.isEmpty()) {
+                    if (commits != null && commits.size() >= 2) {
+                        // Ensure commit range is correctly specified
+                        String startCommit = commits.get(0);
+                        String endCommit = commits.get(commits.size() - 1);
                         new RepositoryMining()
                                 .in(repo)
-                                .through(Commits.range(commits.get(0), commits.get(commits.size() - 1)))
+                                .through(Commits.range(startCommit, endCommit))
+                                .process(new JavaVisitor(), javaWriter)
+                                .mine();
+                    } else { if (commits != null && commits.size() >= 1) {
+                        new RepositoryMining()
+                                .in(repo)
+                                .through(Commits.single(commits.get(0)))
                                 .process(new JavaVisitor(), javaWriter)
                                 .mine();
                     }
+
+                    }
+
+
                 } catch (Exception e) {
                     System.err.println("Error processing repository " + localRepoPath + ": " + e.getMessage());
                     e.printStackTrace();
