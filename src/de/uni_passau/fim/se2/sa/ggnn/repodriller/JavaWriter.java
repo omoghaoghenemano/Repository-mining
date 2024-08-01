@@ -2,9 +2,7 @@ package de.uni_passau.fim.se2.sa.ggnn.repodriller;
 
 import org.repodriller.persistence.PersistenceMechanism;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -26,14 +24,13 @@ public class JavaWriter implements PersistenceMechanism {
         }
 
         try {
-            for (int i = 0; i < objects.length; i++) {
-                writer.write(objects[i].toString());
+            for (Object obj : objects) {
+                writer.write(obj.toString());
+                writer.newLine();
 
-                // Add a newline only if this is not the last object
-                if (i < objects.length - 1) {
-                    writer.newLine();
-                }
             }
+            writer.flush();
+            writer.close();
 
 
         } catch (IOException e) {
