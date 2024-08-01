@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.sa.ggnn.preprocessor.ggnn.visitors;
 
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.AstNode;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.declaration.MethodDeclaration;
-import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.sa.ggnn.ast.visitor.AstVisitorWithDefaults;
 import de.uni_passau.fim.se2.sa.ggnn.program_graphs.ddg.DataFlowFacts;
 import de.uni_passau.fim.se2.sa.ggnn.program_graphs.ddg.Definition;
@@ -33,12 +32,12 @@ public class LastReadVisitor implements
     }
 
     @Override
-    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(ExpressionStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
+    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(MethodDeclaration node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
         Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastWrites = new HashSet<>();
 
         for (Pair<Definition, Use> pair : dataFlowFacts.getDefUsePairs()) {
-            IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().def());
-            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().use());
+            IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().cfgNode());
+            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().cfgNode());
             if (defNode != null && useNode != null) {
                 lastWrites.add(new Pair<>(defNode, useNode));
             }
