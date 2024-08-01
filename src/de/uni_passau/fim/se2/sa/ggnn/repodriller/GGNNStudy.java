@@ -1,6 +1,11 @@
 package de.uni_passau.fim.se2.sa.ggnn.repodriller;
 
+import org.repodriller.RepositoryMining;
 import org.repodriller.Study;
+import org.repodriller.filter.range.Commits;
+import org.repodriller.persistence.csv.CSVFile;
+import org.repodriller.scm.GitRepository;
+import org.repodriller.scm.SCMRepository;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -19,7 +24,15 @@ public class GGNNStudy implements Study {
 
     @Override
     public void execute() {
-        // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+        JavaWriter javaWriter = new JavaWriter(outputDirectory);
+        javaWriter.setFileName("output.csv");
+        for (String repoPath : repos) {
+            SCMRepository repo = GitRepository.singleProject(repoPath);
+            new RepositoryMining()
+                    .in(repo)
+                    .through(Commits.list(commits))
+                    .process(new JavaVisitor(), javaWriter)
+                    .mine();
+        }
     }
 }
