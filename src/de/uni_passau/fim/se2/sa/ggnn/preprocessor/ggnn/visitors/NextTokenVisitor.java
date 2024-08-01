@@ -21,15 +21,15 @@ public class NextTokenVisitor implements
     public NextTokenVisitor(IdentityHashMap<AstNode, IdentityWrapper<AstNode>> astNodeMap) {
         this.astNodeMap = astNodeMap;
     }
+
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(
             AstNode node,
             Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> nextTokenEdges) {
 
         // Add the current node to the queue if not already processed
-        if (!visitedNodes.contains(node)) {
+        if (visitedNodes.add(node)) {
             nodeQueue.add(node);
-            visitedNodes.add(node);
         }
 
         // Process nodes in the queue
@@ -37,15 +37,14 @@ public class NextTokenVisitor implements
             AstNode currentNode = nodeQueue.poll();
             IdentityWrapper<AstNode> currentWrapper = astNodeMap.get(currentNode);
 
-            // Assume nodes are in a sequence and the next node is determined from the current node's children or siblings
-            List<AstNode> successors = getSuccessors(currentNode); // Implement this method based on your AST structure
+            // Get the successor nodes based on your AST structure
+            List<AstNode> successors = getSuccessors(currentNode);
 
             for (AstNode successor : successors) {
-                if (!visitedNodes.contains(successor)) {
+                if (visitedNodes.add(successor)) {
                     IdentityWrapper<AstNode> successorWrapper = astNodeMap.get(successor);
                     nextTokenEdges.add(new Pair<>(currentWrapper, successorWrapper));
                     nodeQueue.add(successor);
-                    visitedNodes.add(successor);
                 }
             }
         }
@@ -60,15 +59,13 @@ public class NextTokenVisitor implements
 
         // Example: Assuming you have a method `getChildren` that returns children nodes
         // and the next token is the next child node in the sequence
-        List<AstNode> successors = new LinkedList<>();
-        List<AstNode> children = getChildren(node); // Implement this based on your AST structure
+        List<AstNode> successors = new ArrayList<>();
+        List<AstNode> children = getChildren(node);
 
         // Example of simple linear sequence where each node has an ordered list of children
         for (int i = 0; i < children.size(); i++) {
-            if (children.get(i).equals(node)) {
-                if (i + 1 < children.size()) {
-                    successors.add(children.get(i + 1));
-                }
+            if (children.get(i).equals(node) && i + 1 < children.size()) {
+                successors.add(children.get(i + 1));
                 break;
             }
         }
@@ -78,10 +75,9 @@ public class NextTokenVisitor implements
 
     // Example method to get children nodes; replace with actual method
     private List<AstNode> getChildren(AstNode node) {
-
-        return node.children();
+        // This should be implemented based on how your AST structure provides children nodes
+        return node.children();  // Assuming `children` method exists
     }
 
-
-        // TODO: Implement required visitors
+    // TODO: Implement other required visitors
 }
