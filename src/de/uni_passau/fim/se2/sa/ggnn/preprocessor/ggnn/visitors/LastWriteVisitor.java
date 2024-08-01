@@ -38,8 +38,8 @@ public class LastWriteVisitor implements
         Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastWrites = new HashSet<>();
 
         for (Pair<Definition, Use> pair : dataFlowFacts.getDefUsePairs()) {
-            IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().cfgNode());
-            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().cfgNode());
+            IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().def());
+            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().use());
             if (defNode != null && useNode != null) {
                 lastWrites.add(new Pair<>(defNode, useNode));
             }
