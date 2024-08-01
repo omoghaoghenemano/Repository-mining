@@ -26,11 +26,15 @@ public class JavaWriter implements PersistenceMechanism {
         }
 
         try {
-            for (Object obj : objects) {
-                writer.write(obj.toString());
-                writer.newLine();
+            for (int i = 0; i < objects.length; i++) {
+                writer.write(objects[i].toString());
+
+                // Add a newline only if this is not the last object
+                if (i < objects.length - 1) {
+                    writer.newLine();
+                }
             }
-            writer.flush();
+            writer.flush(); // Ensure data is written to the file
 
 
         } catch (IOException e) {
