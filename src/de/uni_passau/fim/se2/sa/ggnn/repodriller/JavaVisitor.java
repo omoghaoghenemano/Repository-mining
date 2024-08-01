@@ -24,6 +24,7 @@ public class JavaVisitor implements CommitVisitor {
                     // Write the source code to the file if it's not empty
                     if (mod.getSourceCode() != null && !mod.getSourceCode().isEmpty()) {
                         writer.write(mod.getSourceCode());
+
                     }
                 }
             }

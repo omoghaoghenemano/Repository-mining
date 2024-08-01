@@ -27,7 +27,6 @@ public class JavaWriter implements PersistenceMechanism {
 
         try {
             for (Object obj : objects) {
-                System.out.println(obj);
                 writer.write(obj.toString());
                 writer.newLine();
             }
@@ -50,6 +49,7 @@ public class JavaWriter implements PersistenceMechanism {
     }
 
     public void setFileName(String fileName) {
+        close();
         this.fileName = fileName;
         initializeWriter();
     }
@@ -60,8 +60,6 @@ public class JavaWriter implements PersistenceMechanism {
                 Files.createDirectories(directory);
             }
             Path filePath = directory.resolve(fileName);
-
-            System.out.println(filePath + "file path");
             writer = Files.newBufferedWriter(filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error initializing writer", e);
