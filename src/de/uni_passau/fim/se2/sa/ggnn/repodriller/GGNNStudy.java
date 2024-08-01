@@ -34,16 +34,10 @@ public class GGNNStudy implements Study {
                     SCMRepository repo = GitRepository.singleProject(localRepoPath.toString());
                     JavaWriter javaWriter = new JavaWriter(outputDirectory);
 
-
                     if (commits != null && !commits.isEmpty()) {
                         new RepositoryMining()
                                 .in(repo)
                                 .through(Commits.range(commits.get(0), commits.get(commits.size() - 1)))
-                                .process(new JavaVisitor(), javaWriter)
-                                .mine();
-                    } else {
-                        new RepositoryMining()
-                                .in(repo)
                                 .process(new JavaVisitor(), javaWriter)
                                 .mine();
                     }

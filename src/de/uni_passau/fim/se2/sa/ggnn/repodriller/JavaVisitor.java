@@ -30,8 +30,6 @@ public class JavaVisitor implements CommitVisitor {
         }
 
     private String extractClassName(String fileName) {
-        // Remove the .java extension
-
 
         // Split by underscores
         String[] parts = fileName.split("_");
