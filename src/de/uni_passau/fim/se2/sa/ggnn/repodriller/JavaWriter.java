@@ -30,7 +30,6 @@ public class JavaWriter implements PersistenceMechanism {
 
             }
             writer.flush();
-            writer.close();
 
 
         } catch (IOException e) {

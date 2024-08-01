@@ -17,7 +17,18 @@ public class ChildVisitor implements AstVisitorWithDefaults<Void, Set<Pair<Ident
 
     public ChildVisitor(IdentityHashMap<AstNode, IdentityWrapper<AstNode>> astNodeMap) {
         this.astNodeMap = astNodeMap;
+
     }
 
-    // TODO: Implement required visitors
+
+    @Override
+    public Void defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> childEdges) {
+        IdentityWrapper<AstNode> parentWrapper = astNodeMap.get(node);
+        for (AstNode child : node.children()) {
+            IdentityWrapper<AstNode> childWrapper = astNodeMap.get(child);
+            childEdges.add(Pair.of(parentWrapper, childWrapper));
+            defaultAction(child, childEdges);
+        }
+        return null;
+    }
 }

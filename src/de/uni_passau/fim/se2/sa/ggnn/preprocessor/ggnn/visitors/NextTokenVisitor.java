@@ -20,5 +20,7 @@ public class NextTokenVisitor implements
         this.astNodeMap = astNodeMap;
     }
 
+
+
     // TODO: Implement required visitors
 }
