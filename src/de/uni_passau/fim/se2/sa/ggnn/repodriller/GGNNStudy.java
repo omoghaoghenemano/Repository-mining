@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.sa.ggnn.repodriller;
 
 import org.repodriller.RepositoryMining;
 import org.repodriller.Study;
+import org.repodriller.filter.range.CommitRange;
 import org.repodriller.filter.range.Commits;
 import org.repodriller.persistence.csv.CSVFile;
 import org.repodriller.scm.GitRepository;
@@ -29,7 +30,7 @@ public class GGNNStudy implements Study {
             SCMRepository repo = GitRepository.singleProject(repoPath);
             new RepositoryMining()
                     .in(repo)
-                    .through(Commits.list(commits))
+                    .through((CommitRange) commits)
                     .process(new JavaVisitor(), javaWriter)
                     .mine();
         }
