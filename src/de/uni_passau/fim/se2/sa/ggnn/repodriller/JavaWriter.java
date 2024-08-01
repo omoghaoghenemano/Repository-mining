@@ -27,6 +27,7 @@ public class JavaWriter implements PersistenceMechanism {
 
         try {
             for (Object obj : objects) {
+                System.out.println(obj);
                 writer.write(obj.toString());
                 writer.newLine();
             }
