@@ -26,7 +26,6 @@ public class LastReadVisitor implements
         this.astNodeMap = astNodeMap;
         this.dataFlowFacts = dataFlowFacts;
     }
-
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
         return data;
@@ -34,17 +33,17 @@ public class LastReadVisitor implements
 
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(MethodDeclaration node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
-        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastRead = new HashSet<>();
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastWrites = new HashSet<>();
 
         for (Pair<Definition, Use> pair : dataFlowFacts.getDefUsePairs()) {
             IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().def());
-            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().use());
+            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().cfgNode());
             if (defNode != null && useNode != null) {
-                lastRead.add(new Pair<>(defNode, useNode));
+                lastWrites.add(new Pair<>(defNode, useNode));
             }
         }
 
-        data.addAll(lastRead);
+        data.addAll(lastWrites);
         return data;
     }
 
@@ -52,4 +51,4 @@ public class LastReadVisitor implements
 }
 
     // TODO: Implement required visitors
-
+}
