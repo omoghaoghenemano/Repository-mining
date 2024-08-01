@@ -33,17 +33,17 @@ public class LastReadVisitor implements
 
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(MethodDeclaration node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
-        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastWrites = new HashSet<>();
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastRead = new HashSet<>();
 
         for (Pair<Use, Use> pair : dataFlowFacts.getUseUsePairs()) {
             IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().use());
             IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().use());
             if (defNode != null && useNode != null) {
-                lastWrites.add(new Pair<>(defNode, useNode));
+                lastRead.add(new Pair<>(defNode, useNode));
             }
         }
 
-        data.addAll(lastWrites);
+        data.addAll(lastRead);
         return data;
     }
 
