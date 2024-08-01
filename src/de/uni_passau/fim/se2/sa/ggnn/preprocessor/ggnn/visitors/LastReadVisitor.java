@@ -35,9 +35,9 @@ public class LastReadVisitor implements
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(MethodDeclaration node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
         Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> lastWrites = new HashSet<>();
 
-        for (Pair<Definition, Use> pair : dataFlowFacts.getDefUsePairs()) {
-            IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().cfgNode());
-            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().cfgNode());
+        for (Pair<Use, Use> pair : dataFlowFacts.getUseUsePairs()) {
+            IdentityWrapper<AstNode> defNode = astNodeMap.get(pair.a().use());
+            IdentityWrapper<AstNode> useNode = astNodeMap.get(pair.b().use());
             if (defNode != null && useNode != null) {
                 lastWrites.add(new Pair<>(defNode, useNode));
             }
