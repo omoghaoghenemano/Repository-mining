@@ -30,6 +30,9 @@ public class JavaWriter implements PersistenceMechanism {
                 writer.write(obj.toString());
                 writer.newLine();
             }
+            writer.flush();
+            
+
         } catch (IOException e) {
             throw new RuntimeException("Error writing data", e);
         }
