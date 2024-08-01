@@ -34,7 +34,6 @@ public class JavaWriter implements PersistenceMechanism {
                     writer.newLine();
                 }
             }
-            writer.flush(); // Ensure data is written to the file
 
 
         } catch (IOException e) {
