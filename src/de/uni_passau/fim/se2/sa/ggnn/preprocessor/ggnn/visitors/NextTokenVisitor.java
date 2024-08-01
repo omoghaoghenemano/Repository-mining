@@ -7,7 +7,9 @@ import de.uni_passau.fim.se2.sa.ggnn.util.functional.Pair;
 
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Set;
+import java.util.function.BinaryOperator;
 
 /**
  * Visitor for inferring NEXT_TOKEN edges.
@@ -16,42 +18,39 @@ public class NextTokenVisitor implements
         AstVisitorWithDefaults<Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>>, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>>> {
 
     private final IdentityHashMap<AstNode, IdentityWrapper<AstNode>> astNodeMap;
-    private final Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> nextTokenEdges = new HashSet<>();
-
-    private AstNode lastVisitedNode = null;
 
     public NextTokenVisitor(IdentityHashMap<AstNode, IdentityWrapper<AstNode>> astNodeMap) {
         this.astNodeMap = astNodeMap;
     }
+
+    // TODO: Implement required visitors
+
+
     @Override
-    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> param) {
-        // Visit all children
-        ChildVisitor childVisitor = new ChildVisitor(astNodeMap);
+    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+
+        if (arg == null) {
+            arg = new HashSet<>();
+        }
+
+        List<AstNode> children = node.children();
+        for (int i = 0; i < children.size() - 1; i++) {
+            AstNode current = children.get(i);
+            AstNode next = children.get(i + 1);
+            arg.add(Pair.of(astNodeMap.get(current), astNodeMap.get(next)));
+        }
+        visitChildren(node, arg);
+        return arg;
+    }
+
+    @Override
+    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visitChildren(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> identity, BinaryOperator<Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>>> accumulator) {
+        if (arg == null) {
+            arg = new HashSet<>();
+        }
         for (AstNode child : node.children()) {
-            child.accept(childVisitor, param);
+            child.accept(this, arg);
         }
-
-        // Link the last visited node to the current node
-        if (lastVisitedNode != null) {
-            nextTokenEdges.add(new Pair<>(
-                    astNodeMap.get(lastVisitedNode),
-                    astNodeMap.get(node)
-            ));
-        }
-
-        lastVisitedNode = node;
-
-        return nextTokenEdges;
+        return arg;
     }
-
-    public IdentityHashMap<AstNode, IdentityWrapper<AstNode>> getAstNodeMap() {
-        return astNodeMap;
-    }
-
-    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getNextTokenEdges() {
-        return nextTokenEdges;
-    }
-
-
 }
-
