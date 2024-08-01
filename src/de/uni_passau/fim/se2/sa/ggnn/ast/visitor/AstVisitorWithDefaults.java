@@ -48,10 +48,6 @@ import de.uni_passau.fim.se2.sa.ggnn.ast.model.switch_node.Switch;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.switch_node.SwitchCase;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.switch_node.labels.*;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.type.*;
-import de.uni_passau.fim.se2.sa.ggnn.util.functional.IdentityWrapper;
-import de.uni_passau.fim.se2.sa.ggnn.util.functional.Pair;
-
-import java.util.Set;
 
 /**
  * All visit methods call {@link #defaultAction(AstNode, Object)}.
@@ -728,8 +724,6 @@ public interface AstVisitorWithDefaults<T, A> extends AstVisitor<T, A> {
     default T visit(ComplexType.ArrayType node, A arg) {
         return defaultAction(node, arg);
     }
-
-    Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(AstNode node, Void arg);
 
     // endregion type
 }

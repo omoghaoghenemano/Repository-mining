@@ -9,6 +9,7 @@ import de.uni_passau.fim.se2.sa.ggnn.util.functional.Pair;
 
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ public class ReturnsToVisitor implements AstVisitorWithDefaults<Set<Pair<Identit
     }
 
     @Override
-    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(AstNode node, Void arg) {
+    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(AstNode node, Void arg) {
         Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
         if (node instanceof MethodDeclaration) {
             methodDecl = astNodeMap.get(node);
