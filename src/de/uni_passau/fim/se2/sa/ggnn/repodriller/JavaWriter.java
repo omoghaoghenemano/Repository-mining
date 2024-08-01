@@ -60,6 +60,8 @@ public class JavaWriter implements PersistenceMechanism {
                 Files.createDirectories(directory);
             }
             Path filePath = directory.resolve(fileName);
+
+            System.out.println(filePath + "file path");
             writer = Files.newBufferedWriter(filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error initializing writer", e);

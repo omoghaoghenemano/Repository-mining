@@ -15,7 +15,11 @@ public class JavaVisitor implements CommitVisitor {
                 if (mod.fileNameEndsWith(".java")) {
                     // Set the file name in writer
                     String fileName = mod.getNewPath().replace("/", "_");
-                    ((JavaWriter) writer).setFileName(fileName);
+                    //get only after _underscore
+                    String className = extractClassName(fileName);
+
+                    // Set the file name in writer
+                    ((JavaWriter) writer).setFileName(className);
 
                     // Write the source code to the file if it's not empty
                     if (mod.getSourceCode() != null && !mod.getSourceCode().isEmpty()) {
@@ -24,4 +28,15 @@ public class JavaVisitor implements CommitVisitor {
                 }
             }
         }
+
+    private String extractClassName(String fileName) {
+        // Remove the .java extension
+
+
+        // Split by underscores
+        String[] parts = fileName.split("_");
+
+        // Return the last part
+        return parts.length > 0 ? parts[parts.length - 1] : fileName;
+    }
 }
