@@ -26,17 +26,16 @@ public class JavaWriter implements PersistenceMechanism {
         }
 
         try {
-            StringBuilder sb = new StringBuilder();
             for (Object obj : objects) {
-                sb.append(obj.toString()).append(";");
+                writer.write(obj.toString());
+                writer.newLine();
             }
-            sb.setLength(sb.length() - 1); // Remove trailing semicolon
-            writer.write(sb.toString());
-            writer.newLine();
         } catch (IOException e) {
             throw new RuntimeException("Error writing data", e);
         }
     }
+
+
 
     @Override
     public synchronized void close() {
@@ -60,7 +59,7 @@ public class JavaWriter implements PersistenceMechanism {
                 Files.createDirectories(directory);
             }
             Path filePath = directory.resolve(fileName);
-            writer = Files.newBufferedWriter(filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            writer = Files.newBufferedWriter(filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error initializing writer", e);
         }

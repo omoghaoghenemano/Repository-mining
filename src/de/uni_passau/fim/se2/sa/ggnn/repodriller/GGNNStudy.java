@@ -25,7 +25,6 @@ public class GGNNStudy implements Study {
     @Override
     public void execute() {
         JavaWriter javaWriter = new JavaWriter(outputDirectory);
-        javaWriter.setFileName("output.csv");
         for (String repoPath : repos) {
             SCMRepository repo = GitRepository.singleProject(repoPath);
             new RepositoryMining()

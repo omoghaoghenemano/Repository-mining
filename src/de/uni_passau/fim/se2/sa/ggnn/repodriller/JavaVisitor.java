@@ -10,15 +10,18 @@ public class JavaVisitor implements CommitVisitor {
 
     @Override
     public void process(SCMRepository scmRepository, Commit commit, PersistenceMechanism writer) {
-        for(Modification m : commit.getModifications()) {
-            writer.write(
-                    commit.getHash(),
-                    commit.getAuthor().getName(),
-                    commit.getCommitter().getName(),
-                    m.getFileName(),
-                    m.getType()
-            );
 
+            for (Modification mod : commit.getModifications()) {
+                if (mod.fileNameEndsWith(".java")) {
+                    // Set the file name in writer
+                    String fileName = mod.getNewPath().replace("/", "_");
+                    ((JavaWriter) writer).setFileName(fileName);
+
+                    // Write the source code to the file if it's not empty
+                    if (mod.getSourceCode() != null && !mod.getSourceCode().isEmpty()) {
+                        writer.write(mod.getSourceCode());
+                    }
+                }
+            }
         }
-    }
 }
