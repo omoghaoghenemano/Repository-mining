@@ -48,9 +48,12 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         // Visit children nodes
         node.condition().accept(this, data);
         node.thenStmt().accept(this, data);
-
+        if (node.elseStmt() != null) {
+            node.elseStmt().get().accept(this, data);
+        }
 
         return null;
+        
     }
 
     @Override
