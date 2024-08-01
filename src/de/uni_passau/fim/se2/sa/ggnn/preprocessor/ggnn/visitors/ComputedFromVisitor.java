@@ -1,7 +1,9 @@
 package de.uni_passau.fim.se2.sa.ggnn.preprocessor.ggnn.visitors;
 
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.AstNode;
+import de.uni_passau.fim.se2.sa.ggnn.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.expression.binary.AssignmentExpr;
+import de.uni_passau.fim.se2.sa.ggnn.ast.model.expression.binary.BinaryExpr;
 import de.uni_passau.fim.se2.sa.ggnn.ast.visitor.AstVisitorWithDefaults;
 import de.uni_passau.fim.se2.sa.ggnn.util.functional.IdentityWrapper;
 import de.uni_passau.fim.se2.sa.ggnn.util.functional.Pair;
@@ -23,7 +25,6 @@ public class ComputedFromVisitor implements
     }
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
-        // Default action to handle other nodes
         for (AstNode child : node.children()) {
             child.accept(this, data);
         }
@@ -32,23 +33,52 @@ public class ComputedFromVisitor implements
 
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> visit(AssignmentExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
-        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> computedFrom = new HashSet<>();
+        // Visit the right-hand side expression
+        node.right().accept(this, data);
 
+        // Handle the assignment
         IdentityWrapper<AstNode> leftNode = astNodeMap.get(node.left());
-        IdentityWrapper<AstNode> rightNode = astNodeMap.get(node.right());
+        collectComputedFromEdges(node.right(), leftNode, data);
 
-        if (leftNode != null && rightNode != null) {
-            computedFrom.add(new Pair<>(rightNode, leftNode)); // right side is the source, left side is the result
+        // Visit the left-hand side expression
+        node.left().accept(this, data);
+
+        return data;
+    }
+
+    private void collectComputedFromEdges(Expression expr, IdentityWrapper<AstNode> target, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> data) {
+        if (target == null) {
+            return;
         }
 
-        // Visit children nodes to ensure full traversal
-        node.left().accept(this, data);
-        node.right().accept(this, data);
-        data.addAll(computedFrom);
-        return data;
+        // If the expression is binary, visit its left and right children
+        if (expr instanceof BinaryExpr binaryExpr) {
+            IdentityWrapper<AstNode> leftChild = astNodeMap.get(binaryExpr.left());
+            IdentityWrapper<AstNode> rightChild = astNodeMap.get(binaryExpr.right());
+
+            if (leftChild != null) {
+                data.add(new Pair<>(leftChild, target));
+            }
+            if (rightChild != null) {
+                data.add(new Pair<>(rightChild, target));
+            }
+
+            // Recursively collect computed from edges for nested binary expressions
+            collectComputedFromEdges(binaryExpr.left(), target, data);
+            collectComputedFromEdges(binaryExpr.right(), target, data);
+        } else {
+            // For non-binary expressions, simply add the direct relationship
+            IdentityWrapper<AstNode> exprNode = astNodeMap.get(expr);
+            if (exprNode != null) {
+                data.add(new Pair<>(exprNode, target));
+            }
+        }
     }
 
     // Implement other visit methods for different node types if needed
 }
+
+    // Implement other visit methods for different node types if needed
+
     // TODO: Implement required visitors
 
