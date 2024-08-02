@@ -19,6 +19,7 @@ public class ReturnsToVisitor implements AstVisitorWithDefaults<Set<Pair<Identit
 
     private final IdentityHashMap<AstNode, IdentityWrapper<AstNode>> astNodeMap;
     private IdentityWrapper<AstNode> methodDecl;
+    private final Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
 
     public ReturnsToVisitor(IdentityHashMap<AstNode, IdentityWrapper<AstNode>> astNodeMap) {
         this.astNodeMap = astNodeMap;
@@ -26,7 +27,6 @@ public class ReturnsToVisitor implements AstVisitorWithDefaults<Set<Pair<Identit
 
     @Override
     public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> defaultAction(AstNode node, Void arg) {
-        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
         if (node instanceof MethodDeclaration) {
             methodDecl = astNodeMap.get(node);
             for (AstNode child : node.children()) {
@@ -43,6 +43,9 @@ public class ReturnsToVisitor implements AstVisitorWithDefaults<Set<Pair<Identit
                 edges.addAll(child.accept(this, arg));
             }
         }
+        return edges;
+    }
+    public Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> returnEdges() {
         return edges;
     }
 

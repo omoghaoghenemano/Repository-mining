@@ -54,7 +54,16 @@ public class GGNNEdgesVisitor {
      */
     public Map<GGNNEdgeType, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>>> getEdges() {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        Map<GGNNEdgeType, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>>> edges = new HashMap<>();
+        edges.put(GGNNEdgeType.CHILD, getChildEdges(method));
+        edges.put(GGNNEdgeType.NEXT_TOKEN, getNextTokenEdges(method));
+        edges.put(GGNNEdgeType.RETURNS_TO, getReturnsToEdges(method));
+        edges.put(GGNNEdgeType.LAST_WRITE, getLastWriteEdges(method));
+        edges.put(GGNNEdgeType.LAST_READ, getLastReadEdges(method));
+        edges.put(GGNNEdgeType.COMPUTED_FROM, getComputedFromEdges(method));
+        edges.put(GGNNEdgeType.GUARDED_BY, getGuardedByEdges(method));
+        return edges;
     }
 
     /**
@@ -65,7 +74,11 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getChildEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> childEdges = new HashSet<>();
+        ChildVisitor childVisitor = new ChildVisitor(astNodeMap);
+        node.accept(childVisitor, childEdges);
+        return childEdges;
     }
 
     /**
@@ -76,7 +89,11 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getNextTokenEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        NextTokenVisitor visitor = new NextTokenVisitor(astNodeMap);
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
+        node.accept(visitor, edges);
+        return edges;
     }
 
     /**
@@ -87,7 +104,11 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getLastWriteEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        LastWriteVisitor visitor = new LastWriteVisitor(astNodeMap, dataFlowFacts);
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
+        node.accept(visitor, edges);
+        return edges;
     }
 
     /**
@@ -98,7 +119,11 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getLastReadEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        LastReadVisitor visitor = new LastReadVisitor(astNodeMap, dataFlowFacts);
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
+        node.accept(visitor, edges);
+        return edges;
     }
 
     /**
@@ -109,7 +134,10 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getReturnsToEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        ReturnsToVisitor visitor = new ReturnsToVisitor(astNodeMap);
+        node.accept(visitor, null);
+        return visitor.returnEdges();
     }
 
     /**
@@ -120,7 +148,11 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getComputedFromEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+        ComputedFromVisitor visitor = new ComputedFromVisitor(astNodeMap);
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
+        node.accept(visitor, edges);
+        return edges;
     }
 
     /**
@@ -131,8 +163,16 @@ public class GGNNEdgesVisitor {
      */
     private Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> getGuardedByEdges(AstNode node) {
         // TODO Implement me
-        throw new UnsupportedOperationException("Implement me");
+//        throw new UnsupportedOperationException("Implement me");
+
+        GuardedByVisitor visitor = new GuardedByVisitor(astNodeMap);
+        Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> edges = new HashSet<>();
+        node.accept(visitor, edges);
+        return edges;
+
     }
+
+
 
 
 }
