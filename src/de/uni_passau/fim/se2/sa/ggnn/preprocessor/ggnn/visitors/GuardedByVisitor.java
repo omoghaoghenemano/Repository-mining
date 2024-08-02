@@ -86,34 +86,26 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.testExpr(), arg);
-        addGuardedByPair(node, node.elseExpr(), arg);
-        addGuardedByPair(node, node.thenExpr(), arg);
         node.children().forEach(child -> child.accept(this, arg));
         return null;
     }
-    @Override
-    public Void visit(Block node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        node.children().forEach(child -> child.accept(this, arg));
-        return null;
-    }
+
+
     private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (guard != null) {
             Set<SimpleIdentifier> identifiers = new HashSet<>();
             guard.accept(new VariableTokenVisitor(), identifiers);
             IdentityWrapper<AstNode> wrappedNode = astNodeMap.get(node);
             if (wrappedNode != null) {
-                Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> uniquePairs = new HashSet<>();
                 for (SimpleIdentifier identifier : identifiers) {
                     IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(identifier);
-                    if (wrappedGuard != null) {
-                        uniquePairs.add(new Pair<>(wrappedNode, wrappedGuard));
+                    if (wrappedGuard.elem() != null) {
+                        arg.add(new Pair<>(wrappedNode, wrappedGuard));
                     }
                 }
-                arg.addAll(uniquePairs);
             }
         }
     }
-
     @Override
     public Void defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         node.children().forEach(child -> child.accept(this, arg));
