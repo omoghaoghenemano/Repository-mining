@@ -2,10 +2,7 @@ package de.uni_passau.fim.se2.sa.ggnn.preprocessor.ggnn.visitors;
 
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.AstNode;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.expression.TernaryExpr;
-import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.DoWhileStmt;
-import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.ForStmt;
-import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.IfStmt;
-import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.WhileStmt;
+import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.*;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.try_statement.CatchClause;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.switch_node.Switch;
 import de.uni_passau.fim.se2.sa.ggnn.ast.visitor.AstVisitorWithDefaults;
@@ -92,6 +89,12 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         node.children().forEach(child -> child.accept(this, arg));
         return null;
     }
+    @Override
+    public Void visit(Block node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+        node.children().forEach(child -> child.accept(this, arg));
+        return null;
+    }
+
 
 
     private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
