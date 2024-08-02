@@ -32,19 +32,17 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         } else if (node.forControl() instanceof ForStmt.EnhancedFor enhancedFor) {
             addGuardedByPair(node, enhancedFor.expression(), arg);
         }
-        node.children().forEach(child -> child.accept(this, arg));
+        visitChildren(node, arg);
         return null;
     }
 
     @Override
     public Void visit(IfStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        // Extract the guard expression for the IfStmt
-        AstNode guard = node.condition();
-        addGuardedByPair(node, guard, arg);
-        // Visit children
-        node.children().forEach(child -> child.accept(this, arg));
+        addGuardedByPair(node, node.condition(), arg);
+        visitChildren(node, arg);
         return null;
     }
+
 
     @Override
     public Void visit(WhileStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
@@ -52,7 +50,8 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         AstNode guard = node.condition();
         addGuardedByPair(node, guard, arg);
         // Visit children
-        node.children().forEach(child -> child.accept(this, arg));
+
+        visitChildren(node, arg);
         return null;
     }
 
@@ -63,7 +62,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         AstNode guard = node.condition();
         addGuardedByPair(node, guard, arg);
         // Visit children
-        node.children().forEach(child -> child.accept(this, arg));
+        visitChildren(node, arg);
         return null;
     }
 
@@ -71,7 +70,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     @Override
     public Void visit(Switch.SwitchStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.check(), arg);
-        node.children().forEach(child -> child.accept(this, arg));
+        visitChildren(node, arg);
         return null;
     }
 
@@ -79,14 +78,14 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     public Void visit(CatchClause node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         // In CatchClause, the catchType can be considered as the guard
         addGuardedByPair(node, node.catchType(), arg);
-        node.children().forEach(child -> child.accept(this, arg));
+        visitChildren(node, arg);
         return null;
     }
 
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.testExpr(), arg);
-        node.children().forEach(child -> child.accept(this, arg));
+        visitChildren(node, arg);
         return null;
     }
 
@@ -108,7 +107,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     }
     @Override
     public Void defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        node.children().forEach(child -> child.accept(this, arg));
+        visitChildren(node, arg);
         return null;
     }
 }
