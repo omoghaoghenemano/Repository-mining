@@ -26,10 +26,11 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
 
     @Override
     public Void visit(ForStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        // Extract the guard expression for the ForStmt
-        AstNode guard = node.statementBlock();
-        addGuardedByPair(node, guard, arg);
-        // Visit children
+        if (node.forControl() instanceof ForStmt.RegularFor regularFor) {
+            regularFor.condition().ifPresent(guard -> addGuardedByPair(node, guard, arg));
+        } else if (node.forControl() instanceof ForStmt.EnhancedFor enhancedFor) {
+            addGuardedByPair(node, enhancedFor.expression(), arg);
+        }
         node.children().forEach(child -> child.accept(this, arg));
         return null;
     }
@@ -63,16 +64,14 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         node.children().forEach(child -> child.accept(this, arg));
         return null;
     }
-
+    
     @Override
     public Void visit(Switch.SwitchStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        // Extract the guard expression for the WhileStmt
-        AstNode guard = node.check();
-        addGuardedByPair(node, guard, arg);
-        // Visit children
+        addGuardedByPair(node, node.check(), arg);
         node.children().forEach(child -> child.accept(this, arg));
         return null;
     }
+
 
 
 
