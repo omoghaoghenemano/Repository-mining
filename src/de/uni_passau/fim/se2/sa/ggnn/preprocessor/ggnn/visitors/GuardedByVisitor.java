@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.sa.ggnn.preprocessor.ggnn.visitors;
 
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.AstNode;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.expression.TernaryExpr;
+import de.uni_passau.fim.se2.sa.ggnn.ast.model.identifier.SimpleIdentifier;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.*;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.try_statement.CatchClause;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.switch_node.Switch;
@@ -9,6 +10,7 @@ import de.uni_passau.fim.se2.sa.ggnn.ast.visitor.AstVisitorWithDefaults;
 import de.uni_passau.fim.se2.sa.ggnn.util.functional.IdentityWrapper;
 import de.uni_passau.fim.se2.sa.ggnn.util.functional.Pair;
 
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
@@ -95,18 +97,21 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         return null;
     }
 
-
-
     private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (guard != null) {
+            Set<SimpleIdentifier> identifiers = new HashSet<>();
+            guard.accept(new VariableTokenVisitor(), identifiers);
             IdentityWrapper<AstNode> wrappedNode = astNodeMap.get(node);
-            IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(guard);
-            if (wrappedNode != null && wrappedGuard != null) {
-                arg.add(new Pair<>(wrappedNode, wrappedGuard));
+            if (wrappedNode != null) {
+                for (SimpleIdentifier identifier : identifiers) {
+                    IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(identifier);
+                    if (wrappedGuard != null) {
+                        arg.add(new Pair<>(wrappedNode, wrappedGuard));
+                    }
+                }
             }
         }
     }
-
     @Override
     public Void defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         node.children().forEach(child -> child.accept(this, arg));
