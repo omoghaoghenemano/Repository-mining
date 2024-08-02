@@ -1,10 +1,12 @@
 package de.uni_passau.fim.se2.sa.ggnn.preprocessor.ggnn.visitors;
 
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.AstNode;
+import de.uni_passau.fim.se2.sa.ggnn.ast.model.expression.TernaryExpr;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.DoWhileStmt;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.ForStmt;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.IfStmt;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.WhileStmt;
+import de.uni_passau.fim.se2.sa.ggnn.ast.model.statement.try_statement.CatchClause;
 import de.uni_passau.fim.se2.sa.ggnn.ast.model.switch_node.Switch;
 import de.uni_passau.fim.se2.sa.ggnn.ast.visitor.AstVisitorWithDefaults;
 import de.uni_passau.fim.se2.sa.ggnn.util.functional.IdentityWrapper;
@@ -55,6 +57,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         return null;
     }
 
+
     @Override
     public Void visit(DoWhileStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         // Extract the guard expression for the WhileStmt
@@ -64,7 +67,8 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         node.children().forEach(child -> child.accept(this, arg));
         return null;
     }
-    
+
+
     @Override
     public Void visit(Switch.SwitchStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.check(), arg);
@@ -72,7 +76,13 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         return null;
     }
 
-
+    @Override
+    public Void visit(CatchClause node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+        // In CatchClause, the catchType can be considered as the guard
+        addGuardedByPair(node, node.catchType(), arg);
+        node.children().forEach(child -> child.accept(this, arg));
+        return null;
+    }
 
 
     private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
@@ -80,7 +90,10 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
             IdentityWrapper<AstNode> wrappedNode = astNodeMap.get(node);
             IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(guard);
             if (wrappedNode != null && wrappedGuard != null) {
-                arg.add(new Pair<>(wrappedNode, wrappedGuard));
+                Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>> pair = new Pair<>(wrappedNode, wrappedGuard);
+                if (!arg.contains(pair)) {
+                    arg.add(pair);
+                }
             }
         }
     }
