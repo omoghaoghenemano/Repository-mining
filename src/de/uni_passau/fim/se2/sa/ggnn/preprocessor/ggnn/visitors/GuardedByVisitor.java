@@ -26,8 +26,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     }
 
 
-
-
+ 
     @Override
     public Void visit(IfStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         // The condition is a guard for both the then and else blocks
@@ -83,6 +82,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
 
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+        addGuardedByPair(node, node.testExpr(), arg);
         addGuardedByPair(node.thenExpr(), node.elseExpr(), arg);
         visitChildren(node, arg);
         return null;
