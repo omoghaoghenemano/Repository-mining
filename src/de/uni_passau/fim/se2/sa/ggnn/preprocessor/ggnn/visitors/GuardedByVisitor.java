@@ -25,7 +25,6 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         this.astNodeMap = astNodeMap;
     }
 
-
     @Override
     public Void visit(ForStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (node.forControl() instanceof ForStmt.RegularFor regularFor) {
@@ -33,9 +32,12 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         } else if (node.forControl() instanceof ForStmt.EnhancedFor enhancedFor) {
             addGuardedByPair(node, enhancedFor.expression(), arg);
         }
-        visitChildren(node, arg);
+
         return null;
     }
+
+
+
 
     @Override
     public Void visit(IfStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
@@ -59,7 +61,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         addGuardedByPair(node, guard, arg);
         // Visit children
 
-        visitChildren(node, arg);
+
         return null;
     }
 
@@ -70,7 +72,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         AstNode guard = node.condition();
         addGuardedByPair(node, guard, arg);
         // Visit children
-        visitChildren(node, arg);
+
         return null;
     }
 
@@ -78,7 +80,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     @Override
     public Void visit(Switch.SwitchStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.check(), arg);
-        visitChildren(node, arg);
+
         return null;
     }
 
@@ -92,7 +94,6 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
 
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        addGuardedByPair(node, node.testExpr(), arg);
         addGuardedByPair(node.thenExpr(), node.elseExpr(), arg);
 
         return null;
@@ -101,15 +102,25 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
 
     private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (guard != null) {
+            Set<SimpleIdentifier> identifiers = new HashSet<>();
+            guard.accept(new VariableTokenVisitor(), identifiers);
             IdentityWrapper<AstNode> wrappedNode = astNodeMap.get(node);
-            IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(guard);
-            if (wrappedNode != null && !wrappedGuard.equals(wrappedNode)) {
-                arg.add(new Pair<>(wrappedNode, wrappedGuard));
+            if (wrappedNode != null) {
+                for (SimpleIdentifier identifier : identifiers) {
+                    IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(identifier);
+                    if (!wrappedGuard.equals(wrappedNode)) {
+                        arg.add(new Pair<>(wrappedNode, wrappedGuard));
+                    }
+                }
             }
         }
     }
 
-    
+    @Override
+    public Void defaultAction(AstNode node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+        visitChildren(node, arg);
+        return null;
+    }
 }
 
 
