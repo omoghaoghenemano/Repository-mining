@@ -25,7 +25,6 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         this.astNodeMap = astNodeMap;
     }
 
-
     @Override
     public Void visit(ForStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (node.forControl() instanceof ForStmt.RegularFor regularFor) {
@@ -33,10 +32,24 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         } else if (node.forControl() instanceof ForStmt.EnhancedFor enhancedFor) {
             addGuardedByPair(node, enhancedFor.expression(), arg);
         }
-        visitChildren(node, arg);
+
         return null;
     }
 
+
+
+
+    @Override
+    public Void visit(IfStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+        // The condition is a guard for both the then and else blocks
+
+        node.thenStmt().accept(this, arg);
+        node.elseStmt().ifPresent(elseStmt -> {
+            addGuardedByPair(elseStmt, node.condition(), arg); // Ensure condition guards the else block
+            elseStmt.accept(this, arg);
+        });
+        return null;
+    }
 
 
 
@@ -48,7 +61,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         addGuardedByPair(node, guard, arg);
         // Visit children
 
-        visitChildren(node, arg);
+
         return null;
     }
 
@@ -59,7 +72,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
         AstNode guard = node.condition();
         addGuardedByPair(node, guard, arg);
         // Visit children
-        visitChildren(node, arg);
+
         return null;
     }
 
@@ -67,7 +80,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     @Override
     public Void visit(Switch.SwitchStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.check(), arg);
-        visitChildren(node, arg);
+
         return null;
     }
 
@@ -75,20 +88,19 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     public Void visit(CatchClause node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         // In CatchClause, the catchType can be considered as the guard
         addGuardedByPair(node, node.catchType(), arg);
-        visitChildren(node, arg);
+
         return null;
     }
 
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        addGuardedByPair(node, node.testExpr(), arg);
-        addGuardedByPair(node, node.thenExpr(), arg);
-        addGuardedByPair(node, node.elseExpr(), arg);
-        visitChildren(node, arg);
+        addGuardedByPair(node.thenExpr(), node.elseExpr(), arg);
+
         return null;
     }
-    
-        private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+
+
+    private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (guard != null) {
             Set<SimpleIdentifier> identifiers = new HashSet<>();
             guard.accept(new VariableTokenVisitor(), identifiers);
