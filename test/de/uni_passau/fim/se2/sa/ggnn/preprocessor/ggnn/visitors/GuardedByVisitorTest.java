@@ -43,7 +43,7 @@ public class GuardedByVisitorTest {
         edges.forEach(edge -> System.out.println("Edge: " + edge));
 
         // Adjust the expected number of edges based on correct analysis
-        assertEquals(6, edges.size(), "Expected 5 edges but found " + edges.size());
+        assertEquals(5, edges.size(), "Expected 5 edges but found " + edges.size());
         assertTrue(edges.size() > 0, "No edges were created");
     }
 }
