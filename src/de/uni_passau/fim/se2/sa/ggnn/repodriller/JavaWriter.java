@@ -23,12 +23,22 @@ public class JavaWriter implements PersistenceMechanism {
             throw new IllegalStateException("Writer not initialized. Call setFileName() before write().");
         }
 
+
         try {
-            for (Object obj : objects) {
-                writer.write(obj.toString());
+            String info;
+
+            if (objects.length > 1) {
+                info = (String) objects[2];
+                setFileName(((String) objects[1]));
+            } else {
+                info = (String) objects[0];
+            }
+
+
+                writer.write(info);
                 writer.newLine();
 
-            }
+
             writer.flush();
 
 

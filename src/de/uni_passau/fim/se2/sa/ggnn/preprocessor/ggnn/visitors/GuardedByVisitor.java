@@ -101,10 +101,16 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
 
     private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (guard != null) {
+            Set<SimpleIdentifier> identifiers = new HashSet<>();
+            guard.accept(new VariableTokenVisitor(), identifiers);
             IdentityWrapper<AstNode> wrappedNode = astNodeMap.get(node);
-            IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(guard);
-            if (wrappedNode != null && !wrappedGuard.equals(wrappedNode)) {
-                arg.add(new Pair<>(wrappedNode, wrappedGuard));
+            if (wrappedNode != null) {
+                for (SimpleIdentifier identifier : identifiers) {
+                    IdentityWrapper<AstNode> wrappedGuard = astNodeMap.get(identifier);
+                    if (wrappedGuard.elem() != null  && !wrappedGuard.equals(wrappedNode)) {
+                        arg.add(new Pair<>(wrappedNode, wrappedGuard));
+                    }
+                }
             }
         }
     }
