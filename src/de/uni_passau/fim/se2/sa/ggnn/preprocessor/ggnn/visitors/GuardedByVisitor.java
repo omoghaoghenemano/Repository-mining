@@ -82,13 +82,13 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         addGuardedByPair(node, node.testExpr(), arg);
-        addGuardedByPair(node.thenExpr(), node.elseExpr(), arg);
+        addGuardedByPair(node, node.thenExpr(), arg);
+        addGuardedByPair(node, node.elseExpr(), arg);
         visitChildren(node, arg);
         return null;
     }
-
-
-    private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
+    
+        private void addGuardedByPair(AstNode node, AstNode guard, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
         if (guard != null) {
             Set<SimpleIdentifier> identifiers = new HashSet<>();
             guard.accept(new VariableTokenVisitor(), identifiers);
