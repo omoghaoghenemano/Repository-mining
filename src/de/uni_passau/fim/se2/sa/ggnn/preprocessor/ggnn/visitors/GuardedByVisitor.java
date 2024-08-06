@@ -26,16 +26,7 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
     }
 
 
-    @Override
-    public Void visit(ForStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        if (node.forControl() instanceof ForStmt.RegularFor regularFor) {
-            regularFor.condition().ifPresent(guard -> addGuardedByPair(node, guard, arg));
-        } else if (node.forControl() instanceof ForStmt.EnhancedFor enhancedFor) {
-            addGuardedByPair(node, enhancedFor.expression(), arg);
-        }
-        visitChildren(node, arg);
-        return null;
-    }
+
 
     @Override
     public Void visit(IfStmt node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
@@ -92,7 +83,6 @@ public class GuardedByVisitor implements AstVisitorWithDefaults<Void, Set<Pair<I
 
     @Override
     public Void visit(TernaryExpr node, Set<Pair<IdentityWrapper<AstNode>, IdentityWrapper<AstNode>>> arg) {
-        addGuardedByPair(node, node.testExpr(), arg);
         addGuardedByPair(node.thenExpr(), node.elseExpr(), arg);
         visitChildren(node, arg);
         return null;
